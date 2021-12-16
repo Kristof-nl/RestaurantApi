@@ -9,8 +9,8 @@ using RestaurantApi.Entities;
 namespace RestaurantApi.Migrations
 {
     [DbContext(typeof(RestaurantDbContext))]
-    [Migration("20211215203327_Initialization")]
-    partial class Initialization
+    [Migration("20211216172935_DataAnnotation")]
+    partial class DataAnnotation
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,10 +28,14 @@ namespace RestaurantApi.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("City")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Street")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ZipCode")
                         .HasColumnType("nvarchar(max)");

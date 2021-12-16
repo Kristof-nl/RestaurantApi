@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RestaurantApi.Entities
 {
-    public class ResturnantDbContext : DbContext
+    public class RestaurantDbContext : DbContext
     {
         private string _connectionString = "Server=(localdb)\\LocalDb;Database=RestaurantDb;Trusted_Connection=True;";
         public DbSet<Restaurant> Restaurants { get; set; }
