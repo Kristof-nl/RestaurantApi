@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using RestaurantApi.Entities;
+using RestaurantApi.Exceptions;
 using RestaurantApi.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace RestaurantApi.Services
 
 
             if (restaurant is null)
-                return null;
+                throw new NotFoundException("Restaurant not found");
 
             var result = _mapper.Map<RestaurantDto>(restaurant);
             return result;
@@ -63,7 +64,7 @@ namespace RestaurantApi.Services
             return restaurant.Id;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
             _loger.LogError($"Restaurant with id: {id} DELETE action invoked.");
 
@@ -74,16 +75,15 @@ namespace RestaurantApi.Services
             
             if (restaurant is null)
             {
-                return false;
+                throw new NotFoundException("Restaurant not found");
             }
 
             _dbContext.Restaurants.Remove(restaurant);
             _dbContext.SaveChanges();
-            
-            return true;
+
         }
 
-        public bool Update(int id, UpdateRestaurantDto dto)
+        public void Update(int id, UpdateRestaurantDto dto)
         {
             var restaurant = _dbContext
                .Restaurants
@@ -91,7 +91,7 @@ namespace RestaurantApi.Services
 
             if (restaurant is null)
             {
-                return false;
+                throw new NotFoundException("Restaurant not found");
             }
 
             restaurant.Name = dto.Name;
@@ -99,7 +99,6 @@ namespace RestaurantApi.Services
             restaurant.HasDelivery = dto.HasDelivery;
 
             _dbContext.SaveChanges();
-            return true;
         }
     }
 }
