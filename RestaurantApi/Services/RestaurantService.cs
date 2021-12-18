@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RestaurantApi.Entities;
 using RestaurantApi.Models;
 using System.Collections.Generic;
@@ -11,10 +12,14 @@ namespace RestaurantApi.Services
     {
         private readonly RestaurantDbContext _dbContext;
         private readonly IMapper _mapper;
-        public RestaurantService(RestaurantDbContext dbContext, IMapper mapper)
+
+        private readonly ILogger<RestaurantService> _loger;
+
+        public RestaurantService(RestaurantDbContext dbContext, IMapper mapper, ILogger<RestaurantService> loger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _loger = loger;
         }
 
 
@@ -56,6 +61,45 @@ namespace RestaurantApi.Services
             _dbContext.SaveChanges();
 
             return restaurant.Id;
+        }
+
+        public bool Delete(int id)
+        {
+            _loger.LogError($"Restaurant with id: {id} DELETE action invoked.");
+
+              var restaurant = _dbContext
+                .Restaurants
+                .FirstOrDefault(r => r.Id == id);
+
+            
+            if (restaurant is null)
+            {
+                return false;
+            }
+
+            _dbContext.Restaurants.Remove(restaurant);
+            _dbContext.SaveChanges();
+            
+            return true;
+        }
+
+        public bool Update(int id, UpdateRestaurantDto dto)
+        {
+            var restaurant = _dbContext
+               .Restaurants
+               .FirstOrDefault(r => r.Id == id);
+
+            if (restaurant is null)
+            {
+                return false;
+            }
+
+            restaurant.Name = dto.Name;
+            restaurant.Description = dto.Description;
+            restaurant.HasDelivery = dto.HasDelivery;
+
+            _dbContext.SaveChanges();
+            return true;
         }
     }
 }
